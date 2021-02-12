@@ -1,9 +1,13 @@
 #include <iostream>
 #include <sstream>
+#include <istream>
+#include <string>
 #include <bitset>
 #include <iterator>
 #include <array>
 #include <algorithm>
+#include <stdlib.h>
+#include <regex>
 #include <boost/timer.hpp>
 #include "Item.h"
 
@@ -11,12 +15,16 @@ using namespace std;
 
 template<size_t ARRAY_SIZE>
 vector<Item> GenerateSubsetsOfSet(array<Item, ARRAY_SIZE> arr, size_t maxWeigth, size_t minCost, bool needPrint);
+template<size_t ARRAY_SIZE>
+array<Item, ARRAY_SIZE> ParseDataFromFile(string filename);
 
 inline std::ostream& operator<<(std::ostream& os, const Item& item)
 {
 	os << "{cost: " << item.cost << "  weight: " << item.weight << "}";
 	return os;
 }
+
+
 
 int main()
 {
@@ -29,14 +37,15 @@ int main()
 	cout << "Type min cost:";
 	cin >> minCost;
 
-	for (size_t i = 1; i < arr.size(); ++i)
+	arr = ParseDataFromFile<8>("backpack.txt");
+
+	for (size_t i = 0; i < arr.size(); ++i)
 	{
-		arr[i].cost = i * i;
-		arr[i].weight = arr.size()*arr.size() - i * i;
+		cout << arr[i] << endl;
 	}
 	boost::timer t;
 	t.restart();
-	backpack = GenerateSubsetsOfSet<arr.size()>(arr, maxWeight, minCost, false);
+	backpack = GenerateSubsetsOfSet(arr, maxWeight, minCost, true);
 	cout << t.elapsed() << "s" << endl;
 	for (size_t i = 1; i < backpack.size(); ++i)
 	{
@@ -108,4 +117,48 @@ vector<Item> GenerateSubsetsOfSet(array<Item, ARRAY_SIZE> arr, size_t maxWeigth,
 	}
 
 	return optimizedBackpack;
+}
+
+int GetNumberFromString(string& strWithNums)
+{
+	smatch searchResult;
+	regex rgx("[0-9]+");
+
+	if (!regex_search(strWithNums, searchResult, rgx))
+	{
+		throw invalid_argument("Error: string without numbers argument");
+	}
+
+	string value = searchResult.str();
+	strWithNums = searchResult.suffix().str();
+
+	return atoi(value.c_str());
+}
+
+template<size_t ARRAY_SIZE>
+array<Item, ARRAY_SIZE> ParseDataFromFile(string filename)
+{
+	array<Item, ARRAY_SIZE> tempArr;
+	Item curItem;
+	string temp;
+	ifstream inputFile(filename, ios::in);
+	size_t i = 0;
+	inputFile.seekg(0, ios::beg);
+	while (getline(inputFile, temp) && i < ARRAY_SIZE)
+	{
+		if (temp.find_first_of(";", 0) != string::npos)
+		{
+			continue;
+		}
+		
+		curItem.cost = GetNumberFromString(temp);
+		cout << curItem.cost << " ";
+		curItem.weight = GetNumberFromString(temp);
+		cout << curItem.weight << endl;
+		tempArr[i] = curItem;
+		i++;
+	}
+
+	inputFile.close();
+	return tempArr;
 }
