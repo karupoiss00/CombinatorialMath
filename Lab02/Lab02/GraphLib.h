@@ -10,7 +10,7 @@ struct Vertex
 	{}
 
 	int number;
-	int color;
+	size_t color;
 
 	bool visited;
 };

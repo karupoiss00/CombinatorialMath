@@ -1,5 +1,4 @@
 #include "GraphLib.h"
-
 #include <fstream>
 #include <sstream>
 #include <regex>
