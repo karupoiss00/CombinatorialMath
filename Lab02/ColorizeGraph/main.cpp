@@ -77,7 +77,7 @@ void Print(VertexList& vertexList)
 {
 	for (size_t i = 0; i < vertexList.size(); ++i)
 	{
-		cout << i + 1 << "	" << vertexList[i].color << endl;
+		cout << "Vertex " << i + 1 << " | Color " << vertexList[i].color << endl;
 	}
 }
 
