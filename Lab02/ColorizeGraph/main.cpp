@@ -49,11 +49,6 @@ void ColorizeGraph(const Matrix2D& graph, VertexList& vertexList)
 		{
 			canBeColorized = !vertexList[i].color;
 
-			if (!canBeColorized)
-			{
-				continue;
-			}
-
 			for (size_t j = 0; j < graph[i].size(); ++j)
 			{
 				if (graph[i][j] && vertexList[j].color == color)
@@ -63,11 +58,13 @@ void ColorizeGraph(const Matrix2D& graph, VertexList& vertexList)
 				}
 			}
 
-			if (canBeColorized)
+			if (!canBeColorized)
 			{
-				vertexList[i].color = color;
-				++colorizedVertexes;
+				continue;
 			}
+
+			vertexList[i].color = color;
+			++colorizedVertexes;
 		}
 		++color;
 	}
